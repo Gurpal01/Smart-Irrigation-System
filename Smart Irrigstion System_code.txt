@@ -1,0 +1,63 @@
+#include <DHT.h>
+#include <DHT_U.h>
+#define DHTPIN 2 
+#define DHTTYPE DHT11 
+#define sensorPin A0
+DHT dht(DHTPIN, DHTTYPE);
+void setup() {
+
+  Serial.begin(9600);
+  pinMode(7,OUTPUT);
+  Serial.println("Successful-");
+  dht.begin();
+
+}
+
+void loop() {
+    
+  Serial.print("Analog output: ");
+  Serial.println(readSensor());
+  delay(500);
+
+}
+
+int readSensor() {
+  float h = dht.readHumidity();
+  float t = dht.readTemperature();
+  int sensorValue = analogRead(sensorPin);
+  int outputValue = map(sensorValue, 0, 1023, 255, 0);  // Read the analog value from sensor
+  Serial.print("Humidity: "); 
+  Serial.print(h);
+  Serial.print(" %");
+  Serial.print("\n");
+  Serial.print("Temperature: "); 
+  Serial.print(t);
+  Serial.print(" *C ");
+  Serial.print("\n");
+  Serial.print("Soil Moisture: "); 
+  Serial.print(outputValue); 
+  Serial.print("\n");       
+  if(outputValue <100)
+  {
+    digitalWrite(7,LOW);
+    Serial.print("Moisture is Low and Pump is On"); 
+    Serial.print("\n");
+  }
+  else
+  {
+    digitalWrite(7,HIGH);
+    Serial.print("Moisture is High and Pump is Off"); 
+    Serial.print("\n");
+  } 
+  if(h>60)
+  {
+    Serial.print("Humidity is High so chances of Rainfall is High"); 
+    Serial.print("\n");
+  }
+  else
+  {
+    Serial.print("Humidity is Low so chances of Rainfall is Low"); 
+    Serial.print("\n");
+  }
+  delay(2000);
+}
